@@ -70,12 +70,12 @@ def makeCSV(dictionary, file_name, symbol):
                   'Uradni tecaj']
 
         if os.path.isfile(file_name):
-            with open(file_name, 'a') as csv_file:
+            with open(file_name, 'a', newline='') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
                 writer.writerow(dictionary[symbol])
             csv_file.close()
         else:
-            with open(file_name, 'w') as csv_file:
+            with open(file_name, 'w', newline='') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
                 writer.writeheader()
                 writer.writerow(dictionary[symbol])
@@ -124,13 +124,13 @@ def make_history_csv():
                 dict['Najnizji tecaj'] = match.groupdict()['najnizji_tecaj'].replace(',', '.')
                 dict['Uradni tecaj'] = match.groupdict()['uradni_tecaj'].replace(',', '.')
             if not os.path.isfile('{}.csv'.format(symbol)):
-                with open('{}.csv'.format(symbol), 'w') as csv_file:
+                with open('{}.csv'.format(symbol), 'w', newline='') as csv_file:
                     writer = csv.DictWriter(csv_file, fields)
                     writer.writeheader()
                     writer.writerow(dict)
                 csv_file.close()
             else:
-                with open('{}.csv'.format(symbol), 'a') as csv_file:
+                with open('{}.csv'.format(symbol), 'a', newline='') as csv_file:
                     writer = csv.DictWriter(csv_file, fields)
                     writer.writerow(dict)
                 csv_file.close()
