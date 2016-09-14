@@ -5,7 +5,6 @@ from datetime import date
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
-lastDates = {}
 
 fileName = 'tecaj_{}.txt'.format(date.today())
 fileNameCSV = 'tecaj_{}.csv'.format(date.today())
@@ -44,7 +43,6 @@ def makeDict(file_name):
                     'Datum' : date,
                     'Vrednost indeksa' : value
                 }
-                lastDates[symbol] = date
             if code == '0020':
                 symbol = line[16:24].lstrip().rstrip()
                 dict[symbol] = {'Simbol' : symbol, 'Datum' : date}
@@ -56,7 +54,6 @@ def makeDict(file_name):
                 dict[symbol]['Otvoritveni tecaj'] = open_price
                 close_price = line[253:268].lstrip().rstrip().replace(',', '.')
                 dict[symbol]['Uradni tecaj'] = close_price
-                lastDates[symbol] = date
     file.close()
     return dict
 
@@ -71,7 +68,7 @@ def makeCSV(dictionary, file_name, symbol):
                   'Najvisji tecaj',
                   'Najnizji tecaj',
                   'Uradni tecaj']
-    if dictionary[symbol]['Datum'] != lastDates[symbol]:
+
         if os.path.isfile(file_name):
             with open(file_name, 'a') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
@@ -119,7 +116,6 @@ def make_history_csv():
             reg_ex = re.compile(r'<TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top>(?P<datum>\d{2}.\d{2}.\d{4})</TD><TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top align=right>(?P<odpiralni_tecaj>\d*,*\d*-*)</TD><TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top align=right>(?P<najvisji_tecaj>\d*,*\d*-*)</TD><TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top align=right>(?P<najnizji_tecaj>\d*,*\d*-*)</TD><TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top align=right>(?P<uradni_tecaj>\d*,*\d*-*)</TD><TD c?l?a?s?s?=?o?z?a?d?j?e?T?e?c?a?j?n?i?c?a? ?vAlign=top align=right>(?P<promet>\d*,*\d*-*)</TD>')
         for match in re.finditer(reg_ex, getContent(file_name)):
             dict = {'Simbol': symbol, 'Datum': match.groupdict()['datum']}
-            lastDates[symbol] = dict['Datum']
             if symbol == 'SBITOP':
                 dict['Vrednost indeksa'] = match.groupdict()['tocke'].replace(',', '.')
             else:
@@ -148,8 +144,10 @@ def job_function():
         makeCSV(dict, file_name, symbol)
 
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(job_function, trigger='cron', hour='17')
-scheduler.start()
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(job_function, trigger='cron', hour='17')
+# scheduler.start()
+
+
 
 
