@@ -12,7 +12,7 @@ url = 'http://www.ljse.si/datoteke/BTStecajEUR.txt'
 
 def getSymbols(file_name):
     list = ['SBITOP']
-    with open(file_name) as file:
+    with open(file_name, encoding='cp1252') as file:
         for line in file:
             if line[1:5].lstrip().rstrip() == '0020':
                 list.append(line[16:24].rstrip().lstrip())
@@ -151,14 +151,14 @@ def job_function():
         makeCSV(dict, file_name, symbol)
 
 
-saveFile(url, symbolsFile)
-#get_history()
-#make_history_csv()
-saveFile(url, fileName)
-dictionary = makeDict(fileName)
-symbols = dictionary.keys()
-for symbol in symbols:
-    file_name = '{}.csv'.format(symbol)
-    makeCSV(dictionary, file_name, symbol)
+# saveFile(url, symbolsFile)
+# #get_history()
+# #make_history_csv()
+# saveFile(url, fileName)
+# dictionary = makeDict(fileName)
+# symbols = dictionary.keys()
+# for symbol in symbols:
+#     file_name = '{}.csv'.format(symbol)
+#     makeCSV(dictionary, file_name, symbol)
 
 
