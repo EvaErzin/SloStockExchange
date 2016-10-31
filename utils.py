@@ -93,7 +93,7 @@ def get_history():
     symbols = getSymbols(symbolsFile)
     for symbol in symbols:
         file_name = '{}_history.txt'.format(symbol)
-        symbol_url = 'http://www.ljse.si/cgi-bin/jve.cgi?doc=1298&date1=12.09.2015&date2=12.09.2016&SecurityId={}&IndexOrSecurity=%24SBITOP&x=26&y=8'.format(symbol)
+        symbol_url = 'http://www.ljse.si/cgi-bin/jve.cgi?doc=1298&date1=27.10.2015&date2=27.10.2016&SecurityId={}&IndexOrSecurity=%24SBITOP&x=26&y=8'.format(symbol)
         saveFile(symbol_url, file_name)
         lines = []
         with open(file_name, encoding='cp1252') as file:
@@ -106,7 +106,7 @@ def get_history():
         file.close
 
 def make_history_csv():
-    symbols = getSymbols('tecaj_2016-09-10.txt')
+    symbols = getSymbols(symbolsFile)
     for symbol in symbols:
         if symbol == 'SBITOP':
             fields = ['Simbol', 'Datum', 'Vrednost indeksa']
