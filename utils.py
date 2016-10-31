@@ -3,9 +3,9 @@ import re
 from urllib.request import urlretrieve
 from datetime import date
 import os
-from apscheduler.schedulers.background import BackgroundScheduler
+##from apscheduler.schedulers.background import BackgroundScheduler
 
-symbolsFile = 'tecaj_2016-09-10.txt'
+symbolsFile = 'simboli.txt'
 fileName = 'tecaj_{}.txt'.format(date.today())
 fileNameCSV = 'tecaj_{}.csv'.format(date.today())
 url = 'http://www.ljse.si/datoteke/BTStecajEUR.txt'
@@ -22,7 +22,7 @@ def saveFile(url, file_name):
     return urlretrieve(url, file_name)
 
 def getContent(file_name):
-    with open(file_name, encoding='utf-8') as file:
+    with open(file_name, encoding='cp1252') as file:
         content = file.read()
     file.close()
     return content
@@ -30,7 +30,7 @@ def getContent(file_name):
 def makeDict(file_name):
     dict = {}
     date = ''
-    with open(file_name, encoding='utf-8') as file:
+    with open(file_name, encoding='cp1252') as file:
         for line in file:
             code = line[1:5].lstrip().rstrip()
             if code == '0002':
@@ -70,12 +70,19 @@ def makeCSV(dictionary, file_name, symbol):
                   'Uradni tecaj']
 
         if os.path.isfile(file_name):
-            with open(file_name, 'a', newline='', encoding='utf-8') as csv_file:
-                writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
-                writer.writerow(dictionary[symbol])
-            csv_file.close()
+            ze = False
+            with open(file_name) as file:
+                reader = csv.DictReader(file)
+                for item in reader:
+                    if item['Datum'] == dictionary[symbol]['Datum']:
+                        ze = True
+            if ze == False:
+                with open(file_name, 'a', newline='', encoding='cp1252') as csv_file:
+                    writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
+                    writer.writerow(dictionary[symbol])
+                csv_file.close()
         else:
-            with open(file_name, 'w', newline='', encoding='utf-8') as csv_file:
+            with open(file_name, 'w', newline='', encoding='cp1252') as csv_file:
                 writer = csv.DictWriter(csv_file, fieldnames=fields, extrasaction='ignore')
                 writer.writeheader()
                 writer.writerow(dictionary[symbol])
@@ -89,12 +96,12 @@ def get_history():
         symbol_url = 'http://www.ljse.si/cgi-bin/jve.cgi?doc=1298&date1=12.09.2015&date2=12.09.2016&SecurityId={}&IndexOrSecurity=%24SBITOP&x=26&y=8'.format(symbol)
         saveFile(symbol_url, file_name)
         lines = []
-        with open(file_name, encoding='utf-8') as file:
+        with open(file_name, encoding='cp1252') as file:
             for line in file:
                 lines.append(line.strip())
         file.close()
         string = ''.join(lines)
-        with open(file_name, 'w', encoding='utf-8') as file:
+        with open(file_name, 'w', encoding='cp1252') as file:
             file.write(string)
         file.close
 
@@ -124,13 +131,13 @@ def make_history_csv():
                 dict['Najnizji tecaj'] = match.groupdict()['najnizji_tecaj'].replace(',', '.')
                 dict['Uradni tecaj'] = match.groupdict()['uradni_tecaj'].replace(',', '.')
             if not os.path.isfile('{}.csv'.format(symbol)):
-                with open('{}.csv'.format(symbol), 'w', newline='', encoding='utf-8') as csv_file:
+                with open('{}.csv'.format(symbol), 'w', newline='', encoding='cp1252') as csv_file:
                     writer = csv.DictWriter(csv_file, fields)
                     writer.writeheader()
                     writer.writerow(dict)
                 csv_file.close()
             else:
-                with open('{}.csv'.format(symbol), 'a', newline='', encoding='utf-8') as csv_file:
+                with open('{}.csv'.format(symbol), 'a', newline='', encoding='cp1252') as csv_file:
                     writer = csv.DictWriter(csv_file, fields)
                     writer.writerow(dict)
                 csv_file.close()
@@ -145,16 +152,13 @@ def job_function():
 
 
 saveFile(url, symbolsFile)
-get_history()
-make_history_csv()
+#get_history()
+#make_history_csv()
 saveFile(url, fileName)
 dictionary = makeDict(fileName)
 symbols = dictionary.keys()
 for symbol in symbols:
     file_name = '{}.csv'.format(symbol)
     makeCSV(dictionary, file_name, symbol)
-
-
-
 
 
