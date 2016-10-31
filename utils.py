@@ -4,6 +4,7 @@ from urllib.request import urlretrieve
 from datetime import date
 import os
 import logging
+
 ##from apscheduler.schedulers.background import BackgroundScheduler
 
 symbolsFile = 'simboli.txt'
