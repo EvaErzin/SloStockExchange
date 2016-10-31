@@ -3,6 +3,7 @@ import re
 from urllib.request import urlretrieve
 from datetime import date
 import os
+import logging
 ##from apscheduler.schedulers.background import BackgroundScheduler
 
 symbolsFile = 'simboli.txt'
@@ -150,15 +151,17 @@ def job_function():
         file_name = '{}.csv'.format(symbol)
         makeCSV(dict, file_name, symbol)
 
+logging.basicConfig(filename='logging.log', level=logging.INFO, format='%(asctime)s %(message)s')
 
-# saveFile(url, symbolsFile)
-# #get_history()
-# #make_history_csv()
-# saveFile(url, fileName)
-# dictionary = makeDict(fileName)
-# symbols = dictionary.keys()
-# for symbol in symbols:
-#     file_name = '{}.csv'.format(symbol)
-#     makeCSV(dictionary, file_name, symbol)
-
+logging.info('Starting update...')
+saveFile(url, symbolsFile)
+get_history()
+make_history_csv()
+saveFile(url, fileName)
+dictionary = makeDict(fileName)
+symbols = dictionary.keys()
+for symbol in symbols:
+    file_name = '{}.csv'.format(symbol)
+    makeCSV(dictionary, file_name, symbol)
+logging.info('Ending update...')
 
